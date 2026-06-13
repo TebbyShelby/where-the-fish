@@ -26,7 +26,7 @@ def fetch_all_forecast() -> list[dict]:
 
 def main() -> None:
     print("=" * 50)
-    print("🌤️  WTF — Weather Forecast Ingestion")
+    print("WTF — Weather Forecast Ingestion")
     print(f"  Started at: {datetime.now(UTC).isoformat()}")
     print("=" * 50)
 
@@ -42,9 +42,9 @@ def main() -> None:
         dump_raw(con, "weather_raw", records)
 
     except httpx.HTTPError as e:
-        print(f"  ✗ HTTP error: {e}")
+        print(f"  [err] HTTP error: {e}")
     except Exception as e:
-        print(f"  ✗ Unexpected error: {e}")
+        print(f"  [err] Unexpected error: {e}")
     else:
         # Quick summary of unique locations
         location_ids = {r["location"]["location_id"] for r in records}
@@ -60,14 +60,14 @@ def main() -> None:
             if any(k.lower() in name.lower() for k in coastal_keywords)
         ]
 
-        print(f"\n  📊 Summary:")
+        print(f"\n  Summary:")
         print(f"     Total locations: {len(location_ids)}")
         print(f"     Total records:   {len(records)}")
         print(f"     Forecast days:   7")
         print(f"     Coastal spots:   {', '.join(sorted(found_coastal))}")
 
     con.close()
-    print("\n✅ Done. Data is in bronze.weather_raw")
+    print("\nDone. Data is in bronze.weather_raw")
 
 
 if __name__ == "__main__":

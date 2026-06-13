@@ -1,4 +1,4 @@
-"""DuckDB connection & bronze layer helpers."""
+"""DuckDB connection and bronze layer helpers."""
 
 from pathlib import Path
 
@@ -42,4 +42,4 @@ def dump_raw(con: duckdb.DuckDBPyConnection, table: str, records: list[dict]) ->
             [rec],
         )
 
-    print(f"  ✓ Inserted {len(records)} rows into bronze.{table}")
+    print(f"  [ok] Inserted {len(records)} rows into bronze.{table}")

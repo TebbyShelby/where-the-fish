@@ -1,0 +1,15 @@
+where_the_fish:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: data/dev.duckdb
+      schema: silver
+    staging:
+      type: duckdb
+      path: data/staging.duckdb
+      schema: silver
+    prod:
+      type: duckdb
+      path: data/prod.duckdb
+      schema: silver

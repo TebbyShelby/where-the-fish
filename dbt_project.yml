@@ -1,0 +1,15 @@
+name: "where_the_fish"
+version: "0.1.0"
+config-version: 2
+
+profile: "where_the_fish"
+
+model-paths: ["dbt/models"]
+test-paths: ["dbt/tests"]
+
+models:
+  where_the_fish:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
