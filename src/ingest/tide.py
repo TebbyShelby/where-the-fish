@@ -25,9 +25,8 @@ API_KEY = os.getenv("TIDECHECK_API_KEY")
 # Known Malaysian tide stations.
 # To add more: search on tidecheck.com and grab the numeric station ID.
 TIDE_STATIONS = {
-    # "Kuala Terengganu": "<station_id>",  # TODO: find station ID
-    # "Kerteh":          "<station_id>",
-    # "Penang":          "<station_id>",
+    "Klang":        "klang-140a-mys-uhslc_rq",
+    "Port Dickson": "fes2022-port-dickson",
 }
 
 
@@ -61,10 +60,6 @@ def main() -> None:
     con = get_connection()
 
     for name, station_id in TIDE_STATIONS.items():
-        if station_id == "<station_id>":
-            print(f"\n  Skip {name}: station ID not set")
-            continue
-
         print(f"\n  #{name} (station {station_id})")
 
         try:
