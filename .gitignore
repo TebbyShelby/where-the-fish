@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# DuckDB data (local dev files — not committed)
+data/*.db
+data/*.wal
+data/*parquet
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.egg-info/

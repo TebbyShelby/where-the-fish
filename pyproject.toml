@@ -1,0 +1,18 @@
+[project]
+name = "where-the-fish"
+version = "0.1.0"
+description = "WTF should I fish today?"
+requires-python = ">=3.12"
+
+dependencies = [
+    "httpx>=0.28",
+    "duckdb>=1.2",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.9",
+]
