@@ -17,3 +17,12 @@ data/*parquet
 .idea/
 *.egg-info/
 PLAN.md
+
+# dbt artifacts
+target/
+logs/
+dbt_profiles/.user.yml
+
+# DuckDB data
+data/*.db
+data/*.wal
