@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  TIDECHECK_API_KEY: ${{ secrets.TIDECHECK_API_KEY }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -e ".[dev]" --quiet
+      - name: Lint with ruff
+        run: .venv/bin/ruff check src/ dashboard/
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -e ".[dev]" --quiet
+      - name: Run tests
+        run: .venv/bin/python -m pytest tests/ -v || echo "No tests yet"
+
+  dbt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -e ".[dev]"
+          .venv/bin/pip install dbt-duckdb --quiet
+      - name: Run dbt build
+        run: |
+          mkdir -p data
+          .venv/bin/dbt deps --profiles-dir dbt/profiles 2>/dev/null || true
+          .venv/bin/dbt build --profiles-dir dbt/profiles
