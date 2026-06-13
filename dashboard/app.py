@@ -1,7 +1,5 @@
 """Streamlit dashboard for Where The Fish — fishing intelligence."""
 
-import os
-import sys
 from pathlib import Path
 
 import duckdb

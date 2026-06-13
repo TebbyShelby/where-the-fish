@@ -4,9 +4,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  TIDECHECK_API_KEY: ${{ secrets.TIDECHECK_API_KEY }}
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -46,10 +43,21 @@ jobs:
       - name: Install dependencies
         run: |
           python -m venv .venv
-          .venv/bin/pip install -e ".[dev]"
+          .venv/bin/pip install -e ".[dev]" --quiet
           .venv/bin/pip install dbt-duckdb --quiet
-      - name: Run dbt build
+      - name: Create bronze tables and run dbt
         run: |
           mkdir -p data
-          .venv/bin/dbt deps --profiles-dir dbt/profiles 2>/dev/null || true
+          .venv/bin/python -c "
+import duckdb
+con = duckdb.connect('data/dev.duckdb')
+con.execute('CREATE SCHEMA IF NOT EXISTS bronze')
+for t in ['marine_raw', 'weather_raw', 'tide_raw']:
+    con.execute(f'''CREATE TABLE IF NOT EXISTS bronze.{t} (
+        _ingested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        data JSON
+    )''')
+con.close()
+print('Bronze tables created')
+"
           .venv/bin/dbt build --profiles-dir dbt/profiles
