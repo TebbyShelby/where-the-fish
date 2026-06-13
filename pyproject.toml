@@ -16,3 +16,7 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.9",
 ]
+dashboard = [
+    "streamlit>=1.58",
+    "pandas>=2.0",
+]
