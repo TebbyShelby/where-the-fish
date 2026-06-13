@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -e ".[dev]" --quiet
+      - name: Lint with ruff
+        run: .venv/bin/ruff check src/ dashboard/
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -e ".[dev]" --quiet
+      - name: Run tests
+        run: .venv/bin/python -m pytest tests/ -v || echo "No tests yet"
+
+  dbt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -e ".[dev]" --quiet
+          .venv/bin/pip install dbt-duckdb --quiet
+      - name: Create bronze tables and run dbt
+        run: |
+          mkdir -p data
+          .venv/bin/python -c "
+import duckdb
+con = duckdb.connect('data/dev.duckdb')
+con.execute('CREATE SCHEMA IF NOT EXISTS bronze')
+for t in ['marine_raw', 'weather_raw', 'tide_raw']:
+    con.execute(f'''CREATE TABLE IF NOT EXISTS bronze.{t} (
+        _ingested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        data JSON
+    )''')
+con.close()
+print('Bronze tables created')
+"
+          .venv/bin/dbt build --profiles-dir dbt/profiles

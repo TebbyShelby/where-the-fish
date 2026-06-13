@@ -4,7 +4,6 @@ Free, no API key required.
 Docs: https://open-meteo.com/en/docs/marine-weather-api
 """
 
-import json
 from datetime import UTC, datetime
 
 import httpx

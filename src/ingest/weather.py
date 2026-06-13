@@ -60,10 +60,10 @@ def main() -> None:
             if any(k.lower() in name.lower() for k in coastal_keywords)
         ]
 
-        print(f"\n  Summary:")
+        print("\n  Summary:")
         print(f"     Total locations: {len(location_ids)}")
         print(f"     Total records:   {len(records)}")
-        print(f"     Forecast days:   7")
+        print("     Forecast days:   7")
         print(f"     Coastal spots:   {', '.join(sorted(found_coastal))}")
 
     con.close()

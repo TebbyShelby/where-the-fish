@@ -1,0 +1,40 @@
+name: Manual Pipeline
+
+on:
+  workflow_dispatch:
+
+env:
+  TIDECHECK_API_KEY: ${{ secrets.TIDECHECK_API_KEY }}
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -e "." --quiet
+          .venv/bin/pip install dbt-duckdb --quiet
+
+      - name: Ingest marine data
+        run: .venv/bin/python -m src.ingest.marine
+
+      - name: Ingest weather data
+        run: .venv/bin/python -m src.ingest.weather
+
+      - name: Ingest tide data
+        run: .venv/bin/python -m src.ingest.tide
+
+      - name: Build dbt models
+        run: .venv/bin/dbt build --profiles-dir dbt/profiles
+
+      - name: Archive DuckDB database
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-duckdb
+          path: data/prod.duckdb
+          retention-days: 7
